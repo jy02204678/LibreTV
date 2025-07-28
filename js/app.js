@@ -667,6 +667,7 @@ async function search() {
             // 如果名称相同，则按照来源排序
             return (a.source_name || '').localeCompare(b.source_name || '');
         });
+        
         // 更新搜索结果计数
         const searchResultsCount = document.getElementById('searchResultsCount');
         if (searchResultsCount) {
