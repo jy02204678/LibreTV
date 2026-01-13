@@ -36,31 +36,16 @@ async function checkForUpdates() {
         
         // 获取最新版本
         let latestVersion;
-        const VERSION_URL = {
-            PROXY: 'https://raw.ihtw.moe/raw.githubusercontent.com/LibreSpark/LibreTV/main/VERSION.txt',
-            DIRECT: 'https://raw.githubusercontent.com/LibreSpark/LibreTV/main/VERSION.txt'
-        };
-        const FETCH_TIMEOUT = 1500;
+        // 使用服务器代理来获取最新版本
+        const PROXY_URL_VERSION = PROXY_URL + encodeURIComponent('https://raw.githubusercontent.com/LibreSpark/LibreTV/main/VERSION.txt');
         
         try {
-            // 尝试使用代理URL获取最新版本
-            const proxyPromise = fetchVersion(VERSION_URL.PROXY, '代理请求失败');
-            const timeoutPromise = new Promise((_, reject) => 
-                setTimeout(() => reject(new Error('代理请求超时')), FETCH_TIMEOUT)
-            );
-            
-            latestVersion = await Promise.race([proxyPromise, timeoutPromise]);
-            console.log('通过代理服务器获取版本成功');
+            // 通过服务器代理获取最新版本
+            latestVersion = await fetchVersion(PROXY_URL_VERSION, '代理请求失败');
+            console.log('通过服务器代理获取版本成功');
         } catch (error) {
-            console.log('代理请求失败，尝试直接请求:', error.message);
-            try {
-                // 代理失败后尝试直接获取
-                latestVersion = await fetchVersion(VERSION_URL.DIRECT, '获取最新版本失败');
-                console.log('直接请求获取版本成功');
-            } catch (directError) {
-                console.error('所有版本检查请求均失败:', directError);
-                throw new Error('无法获取最新版本信息');
-            }
+            console.error('代理请求失败:', error);
+            throw new Error('无法获取最新版本信息');
         }
         
         console.log('当前版本:', currentVersion);
