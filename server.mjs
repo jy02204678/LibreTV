@@ -134,9 +134,6 @@ app.get('/proxy/:encodedUrl', async (req, res) => {
     }
 
     log(`代理请求: ${targetUrl}`);
-    
-    // 解析目标URL以获取origin
-    const parsedUrl = new URL(targetUrl);
 
     // 添加请求超时和重试逻辑
     const maxRetries = config.maxRetries;
@@ -150,12 +147,7 @@ app.get('/proxy/:encodedUrl', async (req, res) => {
           responseType: 'stream',
           timeout: config.timeout,
           headers: {
-            'User-Agent': config.userAgent,
-            'Accept': '*/*',
-            'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
-            'Accept-Encoding': 'gzip, deflate',
-            'Connection': 'keep-alive',
-            'Referer': parsedUrl.origin || targetUrl
+            'User-Agent': config.userAgent
           }
         });
       } catch (error) {
